@@ -30,6 +30,16 @@ vim.o.listchars = 'tab:» ,trail:·'   -- especially useful in GDScript
 vim.keymap.set('i', 'jj', '<Esc>', { desc = 'Exit insert mode with jj' })
 vim.keymap.set('n', '<leader>e', ':Neotree toggle<CR>', { desc = 'Toggle file tree' })
 
+-- Window navigation
+vim.keymap.set('n', '<C-h>', '<C-w>h', { desc = 'Move to left window' })
+vim.keymap.set('n', '<C-j>', '<C-w>j', { desc = 'Move to window below' })
+vim.keymap.set('n', '<C-k>', '<C-w>k', { desc = 'Move to window above' })
+vim.keymap.set('n', '<C-l>', '<C-w>l', { desc = 'Move to right window' })
+
+-- Diagnostics navigation
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Next diagnostic' })
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Previous diagnostic' })
+
 vim.schedule(function()
   vim.o.clipboard = 'unnamedplus'
 end)
@@ -108,6 +118,7 @@ require('lazy').setup({
   -- ========================
   {
     'neovim/nvim-lspconfig',
+    event = 'VeryLazy', -- defer loading the LSP stack instead of loading on every startup
     dependencies = {
       { 'mason-org/mason.nvim', opts = {} },
       'mason-org/mason-lspconfig.nvim',
@@ -152,17 +163,39 @@ require('lazy').setup({
   },
 
   -- ========================
+  -- FUZZY FINDER
+  -- ========================
+  {
+    'nvim-telescope/telescope.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    cmd = 'Telescope',
+    keys = {
+      { '<leader>ff', '<cmd>Telescope find_files<cr>', desc = 'Find files' },
+      { '<leader>fg', '<cmd>Telescope live_grep<cr>', desc = 'Grep project' },
+    },
+  },
+
+  -- ========================
+  -- WHICH-KEY
+  -- ========================
+  {
+    'folke/which-key.nvim',
+    event = 'VeryLazy',
+    opts = {},
+  },
+
+  -- ========================
   -- FILE TREE
   -- ========================
   {
     'nvim-neo-tree/neo-tree.nvim',
     branch = 'v3.x',
+    cmd = 'Neotree', -- lazy-load on command instead of always loading at startup
     dependencies = {
       'nvim-lua/plenary.nvim',
       'MunifTanjim/nui.nvim',
       'nvim-tree/nvim-web-devicons',
     },
-    lazy = false,
   },
 
   -- ========================
